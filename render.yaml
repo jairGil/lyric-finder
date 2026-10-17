@@ -1,21 +1,39 @@
-services:
-  - type: web
-    name: lyrics-api
-    runtime: docker
-    plan: free
-    dockerfilePath: ./backend/Dockerfile
-    dockerContext: .
-    healthCheckPath: /healthz
-    envVars:
-      - key: LYRICS_STORAGE_DRIVER
-        value: postgres
-      - key: LYRICS_DATABASE_URL
+# Exported from Render on 2026-10-17T06:31:03Z
+version: "1"
+projects:
+- name: My project
+  environments:
+  - name: Production
+    services:
+    - type: web
+      name: lyric-finder
+      runtime: go
+      repo: https://github.com/jairGil/lyric-finder
+      branch: dev
+      plan: free
+      envVars:
+      - key: YOUTUBE_API_KEY
+        sync: false
+      - key: LYRICS_LOG_LEVEL
+        sync: false
+      - key: LYRICS_METRICS_ADDR
+        sync: false
+      - key: LYRICS_RENDER_DIR
+        sync: false
+      - key: LYRICS_ASSETS_DIR
+        sync: false
+      - key: LYRICS_FFMPEG_DIR
         sync: false
       - key: LYRICS_CORS_ORIGINS
         sync: false
-      - key: YOUTUBE_API_KEY
+      - key: LYRICS_DATABASE_URL
         sync: false
-      - key: LYRICS_RENDER_DIR
-        value: /tmp/renders
-      - key: LYRICS_LOG_LEVEL
-        value: info
+      - key: LYRICS_STORAGE_DRIVER
+        sync: false
+      - key: LYRICS_HTTP_ADDR
+        sync: false
+      region: virginia
+      buildCommand: go build -tags netgo -ldflags '-s -w' cmd/ -o app
+      startCommand: ./app
+      autoDeployTrigger: commit
+      rootDir: backend/
