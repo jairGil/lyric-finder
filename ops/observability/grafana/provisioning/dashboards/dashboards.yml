@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: Lyrics API
+    orgId: 1
+    folder: Lyrics API
+    type: file
+    disableDeletion: true
+    editable: false
+    options:
+      path: /var/lib/grafana/dashboards

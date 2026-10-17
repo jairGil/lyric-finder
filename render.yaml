@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: lyrics-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: .
+    healthCheckPath: /healthz
+    envVars:
+      - key: LYRICS_STORAGE_DRIVER
+        value: postgres
+      - key: LYRICS_DATABASE_URL
+        sync: false
+      - key: LYRICS_CORS_ORIGINS
+        sync: false
+      - key: YOUTUBE_API_KEY
+        sync: false
+      - key: LYRICS_RENDER_DIR
+        value: /tmp/renders
+      - key: LYRICS_LOG_LEVEL
+        value: info

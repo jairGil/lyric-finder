@@ -1,0 +1,28 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-lyrics}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-lyrics}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    ports:
+      - 127.0.0.1:5433:5432
+    volumes:
+      - lyrics_postgres_data:/var/lib/postgresql/data
+
+  backend:
+    environment:
+      LYRICS_STORAGE_DRIVER: postgres
+      LYRICS_DATABASE_URL: postgres://${POSTGRES_USER:-lyrics}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-lyrics}?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  lyrics_postgres_data:

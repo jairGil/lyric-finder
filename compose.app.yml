@@ -1,0 +1,36 @@
+name: lyrics-app
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    environment:
+      LYRICS_STORAGE_DRIVER: ${LYRICS_STORAGE_DRIVER:-sqlite}
+      LYRICS_DATABASE_URL: ${LYRICS_DATABASE_URL:-}
+      LYRICS_HTTP_ADDR: 0.0.0.0:8080
+      LYRICS_DB_PATH: /data/lyrics.db
+      LYRICS_FFMPEG_DIR: /app/tools
+      LYRICS_ASSETS_DIR: /app/assets
+      LYRICS_RENDER_DIR: /data/renders
+      LYRICS_CORS_ORIGINS: ${LYRICS_CORS_ORIGINS:-http://localhost:8081}
+      YOUTUBE_API_KEY: ${YOUTUBE_API_KEY:-}
+    ports:
+      - 127.0.0.1:8080:8080
+    volumes:
+      - lyrics_data:/data
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8080}
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - 127.0.0.1:8081:80
+
+volumes:
+  lyrics_data:

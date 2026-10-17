@@ -1,0 +1,17 @@
+local.file_match "lyrics_api" {
+  path_targets = [{
+    "__path__" = "/var/log/lyrics/*.jsonl*",
+    "job"      = "lyrics-api",
+  }]
+}
+
+loki.source.file "lyrics_api" {
+  targets    = local.file_match.lyrics_api.targets
+  forward_to = [loki.write.local.receiver]
+}
+
+loki.write "local" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}
